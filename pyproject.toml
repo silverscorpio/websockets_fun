@@ -7,6 +7,9 @@ authors = ["silverscorpio <rajat.newtoneinstein@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 fastapi = "^0.79.0"
+uvicorn = {extras = ["standard"], version = "^0.18.2"}
+python-multipart = "^0.0.5"
+websockets = "^10.3"
 
 [tool.poetry.dev-dependencies]
 
