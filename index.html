@@ -6,38 +6,50 @@
 </head>
 <body>
 
-<h1>Websockets based Messaging</h1>
-
-<form action="" onsubmit="sendMessage(event)">
-    Message: <input type="text"
-                    name="message"
-                    placeholder="Message"
-                    autocomplete="off"
-                    id="messageText">
-    <br>
-    <button>Submit</button>
-    <ol id="message_list"></ol>
+<h1>Websockets Messaging</h1>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<form id="form">
+    <label>Message: <input type="text" placeholder="Message" id="message" name="messageValue"/></label>
+    <br><br>
+    <button type="submit">Submit</button>
 </form>
-
+<div id="msg_list">
+</div>
 <script>
-
-        var ws = new WebSocket("ws://localhost:8000/ws");
-        ws.onmessage = function(event) {
-            var message_list = document.getElementById("message_list")
-            var message_list_item = document.createElement('li')
-            message_list_item.innerHTML = event.data
-            message_list.appendChild(message_list_item)
-        };
+    // form submit button event listener
+    const form = document.getElementById('form');
+    form.addEventListener('submit', submitForm);
+    
+    // counter for the messages (for their serial number)
+    let msg_count = 0;
+    
+    // receive message by websocket
+    let ws = new WebSocket("ws://localhost:8000/ws");
+    ws.onmessage = function (event) {
+        const para = document.createElement("p")
+        const parsed_msg = JSON.parse(event.data)[0]["value"]
         
-        function sendMessage(event) {
-            var form_input = document.getElementById("messageText")
-            ws.send(JSON.stringify({
-                "Message": form_input.value}
-               ))
-            form_input.value = ''
-            event.preventDefault()
+        // if nothing was entered in form (blank form and submission)
+        if (parsed_msg) {
+            msg_count++
+            const para_content = document.createTextNode(
+                    addIndexToMessage(msg_count, parsed_msg))
+            para.appendChild(para_content)
+            document.getElementById("msg_list").appendChild(para)
         }
-
+    };
+    
+    // on submission of form, serialize it, send the message to websocket
+    function submitForm(event) {
+        let form_value = document.getElementById("message")
+        ws.send(JSON.stringify($(this).serializeArray()))
+        form_value.value = ''
+        event.preventDefault()
+    }
+    
+    function addIndexToMessage(counter, msg) {
+        return counter.toString().concat(". ", msg)
+    }
 
 </script>
 </body>
