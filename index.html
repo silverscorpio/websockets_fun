@@ -9,9 +9,13 @@
 <h1>Websockets based Messaging</h1>
 
 <form action="" onsubmit="sendMessage(event)">
-    Message: <input type="text" name="message" placeholder="Message" autocomplete="off" id="messageText">
+    Message: <input type="text"
+                    name="message"
+                    placeholder="Message"
+                    autocomplete="off"
+                    id="messageText">
     <br>
-    <button>Send</button>
+    <button>Submit</button>
     <ol id="message_list"></ol>
 </form>
 
@@ -26,9 +30,11 @@
         };
         
         function sendMessage(event) {
-            var input = document.getElementById("messageText")
-            ws.send(JSON.stringify(input.value))
-            input.value = ''
+            var form_input = document.getElementById("messageText")
+            ws.send(JSON.stringify({
+                "Message": form_input.value}
+               ))
+            form_input.value = ''
             event.preventDefault()
         }
 

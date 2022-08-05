@@ -19,6 +19,6 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
         data = await websocket.receive_json()
-        await websocket.send_json({
-            "Message": f"{data}"
-        })
+        # discard empty messages
+        if data["Message"]:
+            await websocket.send_json(data["Message"])
